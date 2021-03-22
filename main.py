@@ -21,15 +21,16 @@ print(forecast_out)
 
 df['label'] = df[forecast_col].shift(-forecast_out)
 
-df.dropna(inplace=True)
-
 X = np.array(df.drop(['label'], 1))
-y = np.array(df['label'])
 X = preprocessing.scale(X)
+X = X[:-forecast_out]
+X_lately = X[-forecast_out:]
+
+df.dropna(inplace=True)
+y = np.array(df['label'])
 y = np.array(df['label'])
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
-
 
 # -1 as many as it can by processor
 clf = LinearRegression(n_jobs=-1)
@@ -38,11 +39,12 @@ clf = LinearRegression(n_jobs=-1)
 # polynomial
 # clf = svm.SVR(kernel='poly')
 
-
 # train
 clf.fit(X_train, y_train)
 
 # test
 accuracy = clf.score(X_test, y_test)
 
-print(accuracy)
+forecast_set = clf.predict(X_lately)
+
+print(forecast_set,accuracy , forecast_out)
