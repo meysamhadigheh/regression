@@ -1,4 +1,6 @@
 # This is a sample Python script.
+import math
+
 import quandl as Quandl
 import pandas as pd
 
@@ -9,5 +11,12 @@ df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open']) / df['Adj. Open'] * 100.
 
 df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
 
+forecast_col = 'Adj. Close'
+df.fillna(-99999, inplace=True)
 
+forecast_out = int(math.ceil(0.01 * len(df)))
+
+df['label'] = df[forecast_col].shift(-forecast_out)
+
+df.dropna(inplace=True)
 print(df.head())
